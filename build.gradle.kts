@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library") version "8.0.2"
-    id("org.jetbrains.kotlin.android") version "1.8.0"
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
     `maven-publish`
 }
 
@@ -36,10 +36,7 @@ android {
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
+
 
 dependencies {
     implementation(libs.androidx.core.ktx)
