@@ -7,7 +7,7 @@ class BestBrain {
 
     companion object {
 
-        fun initializeBestBrain(configuration: JSONObject) {
+        fun initialize(configuration: JSONObject) {
             Constants.API_BASE_URL = configuration.getString("apiBase")
             Constants.SOCKET_URL = configuration.getString("socketURL")
             Constants.API_KEY = configuration.getString("appKey")
