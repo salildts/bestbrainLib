@@ -24,6 +24,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BestBrain"
-include(":app")
-//include(":bestbrain")
+//rootProject.name = "BestBrain"
+//include(":app")
+include(":bestbrain")
