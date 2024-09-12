@@ -1,16 +1,17 @@
 package com.app.bestbrain.init
 
 import com.app.bestbrain.utils.Constants
+import org.json.JSONObject
 
 class BestBrain {
 
     companion object {
 
-        fun initializeBestBrain(baseUrl: String, socketUrl: String, apiKey: String, appId: String) {
-            Constants.API_BASE_URL = baseUrl
-            Constants.SOCKET_URL = socketUrl
-            Constants.API_KEY = apiKey
-            Constants.APP_ID = appId
+        fun initializeBestBrain(configuration: JSONObject) {
+            Constants.API_BASE_URL = configuration.getString("apiBase")
+            Constants.SOCKET_URL = configuration.getString("socketURL")
+            Constants.API_KEY = configuration.getString("appKey")
+            Constants.APP_ID = configuration.getString("appID")
         }
     }
 }
