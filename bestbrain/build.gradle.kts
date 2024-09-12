@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library") version "8.0.2" // Stable AGP version
-    id("org.jetbrains.kotlin.android") version "1.8.0"
+    id("com.android.library") // Stable AGP version
+    id("org.jetbrains.kotlin.android")
     `maven-publish`
 }
 
@@ -25,11 +25,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
     buildFeatures {
         viewBinding = true
