@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("com.android.library") version "8.0.2" // Stable AGP version
+    id("org.jetbrains.kotlin.android") version "1.8.0"
     `maven-publish`
 }
 
