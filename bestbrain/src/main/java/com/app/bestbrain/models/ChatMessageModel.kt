@@ -9,7 +9,7 @@ data class ChatMessageModel(
     data class Data(
         val bb_buttons: List<BbButton?>? = null,
         var bb_type: String? = null,
-        var bb_value: String? = null
+        var bb_value: Any? = null
     ) {
         data class BbButton(
             val bb_actions: List<BbAction?>? = null,

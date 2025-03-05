@@ -2,6 +2,7 @@ package com.app.bestbrain.adapter
 
 import android.content.Context
 import android.text.Html
+import android.text.Html.FROM_HTML_MODE_LEGACY
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -62,14 +63,25 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is SendViewHolder -> {
-                holder.binding.tvSendMsg.text = Html.fromHtml(chatList[position].data?.bb_value ?: "")
+                if (chatList[position].data?.bb_value is String)
+                    holder.binding.tvSendMsg.text = Html.fromHtml(
+                        (chatList[position].data?.bb_value ?: "") as String?,
+                        FROM_HTML_MODE_LEGACY
+                    )
+                else
+                    holder.binding.tvSendMsg.text = ""
 
             }
 
             is ReceiveTextViewHolder -> {
-                holder.binding.tvReceiveMsg.text =
-                    Html.fromHtml(chatList[position].data?.bb_value ?: "")
-
+                if (chatList[position].data?.bb_value is String)
+                    holder.binding.tvReceiveMsg.text =
+                        Html.fromHtml(
+                            (chatList[position].data?.bb_value ?: "") as String?,
+                            FROM_HTML_MODE_LEGACY
+                        )
+                else
+                    holder.binding.tvReceiveMsg.text = ""
             }
 
             is ReceiveButtonViewHolder -> {

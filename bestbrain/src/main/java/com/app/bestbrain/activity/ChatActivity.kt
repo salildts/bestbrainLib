@@ -85,7 +85,9 @@ class ChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListe
 
     private fun initSocket() {
         try {
-            mSocket = IO.socket(Constants.SOCKET_URL)
+            val options = IO.Options()
+            options.transports = arrayOf("websocket")
+            mSocket = IO.socket(Constants.SOCKET_URL, options)
         } catch (e: URISyntaxException) {
             e.printStackTrace()
         }
@@ -123,10 +125,7 @@ class ChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListe
 
     private val onConnectError =
         Emitter.Listener { args: Array<Any?>? ->
-            Log.e(
-                "Error",
-                args.toString()
-            )
+            Log.e("Error", args.toString())
         }
 
     private val onNewMessage =
