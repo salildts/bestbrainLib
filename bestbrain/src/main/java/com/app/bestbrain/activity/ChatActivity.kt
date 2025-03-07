@@ -63,6 +63,9 @@ class ChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListe
         initSocket()
         connectSocket()
 
+        if (Constants.HEADER_TEXT.isNotEmpty())
+            binding.tvHeader.text = Constants.HEADER_TEXT
+
         chatAdapter = ChatAdapter(this, this)
         binding.rvChat.adapter = chatAdapter
         binding.rvChat.addItemDecoration(SpaceItemDecoration(10))

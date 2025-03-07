@@ -7,5 +7,6 @@ class Constants {
         var SOCKET_URL = ""
         var API_KEY = ""
         var APP_ID = ""
+        var HEADER_TEXT = ""
     }
 }
