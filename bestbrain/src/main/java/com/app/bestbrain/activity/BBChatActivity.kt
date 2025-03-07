@@ -1,15 +1,24 @@
 package com.app.bestbrain.activity
 
+import android.Manifest.permission
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.app.bestbrain.R
 import com.app.bestbrain.adapter.ChatAdapter
 import com.app.bestbrain.adapter.ChatButtonAdapter
 import com.app.bestbrain.databinding.ActivityBbChatBinding
 import com.app.bestbrain.models.ChatMessageModel
 import com.app.bestbrain.models.SessionIdResponse
 import com.app.bestbrain.network.RetrofitInstance
+import com.app.bestbrain.utils.AudioRecording
+import com.app.bestbrain.utils.AudioRecording.RecordCompleteListener
 import com.app.bestbrain.utils.Constants
 import com.app.bestbrain.utils.ProgressDialog
 import com.app.bestbrain.utils.SharedPreferenceManager
@@ -37,6 +46,9 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var pd: ProgressDialog
     private lateinit var sharedPreferenceManager: SharedPreferenceManager
+    private lateinit var audioRecording: AudioRecording
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private var isRecording = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +67,30 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
         sharedPreferenceManager = SharedPreferenceManager(this)
         sessionId = sharedPreferenceManager.sessionId
 
+        audioRecording = AudioRecording(this, object : RecordCompleteListener {
+
+            override fun onRecordComplete(outputText: String?) {
+                setAudioOutput(outputText)
+            }
+
+            override fun onRecordError(outputText: String?) {
+                setAudioOutput(outputText)
+            }
+        })
+        audioRecording.initAudioRecording()
+
+        requestPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    toggleRecording()
+                } else {
+                    Toast.makeText(this, "Please enable audio permission", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
         initView()
+        initClickListener()
     }
 
     private fun initView() {
@@ -70,6 +105,10 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
         binding.rvChat.adapter = chatAdapter
         binding.rvChat.addItemDecoration(SpaceItemDecoration(10))
 
+        getSessionId()
+    }
+
+    private fun initClickListener() {
         binding.btnBack.setOnClickListener {
             finish()
         }
@@ -83,7 +122,17 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
             }
         }
 
-        getSessionId()
+        binding.btnRecordAudio.setOnClickListener({
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                toggleRecording()
+            } else {
+                requestPermissionLauncher.launch(permission.RECORD_AUDIO)
+            }
+        })
     }
 
     private fun initSocket() {
@@ -99,6 +148,7 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
     override fun onDestroy() {
         super.onDestroy()
         disconnectSocket()
+        audioRecording.destroyAudioRecording()
     }
 
     private fun connectSocket() {
@@ -227,5 +277,29 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
 
     override fun onButtonClick(message: String) {
         sendMessage(message)
+    }
+
+    private fun toggleRecording() {
+        if (isRecording) {
+            isRecording = false
+            binding.btnRecordAudio.setImageResource(R.drawable.ic_audio)
+            audioRecording.stopRecording()
+        } else {
+            isRecording = true
+            binding.btnRecordAudio.setImageResource(R.drawable.ic_stop)
+            audioRecording.startRecording()
+            binding.edtMessage.setText("")
+        }
+    }
+
+    private fun setAudioOutput(outputText: String?) {
+        isRecording = false
+        binding.btnRecordAudio.setImageResource(R.drawable.ic_audio)
+
+        if (!outputText.isNullOrEmpty()) {
+            if (!sessionId.isNullOrEmpty()) {
+                sendMessage(outputText)
+            }
+        }
     }
 }
