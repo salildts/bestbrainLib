@@ -6,7 +6,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.app.bestbrain.adapter.ChatAdapter
 import com.app.bestbrain.adapter.ChatButtonAdapter
-import com.app.bestbrain.databinding.ActivityChatBinding
+import com.app.bestbrain.databinding.ActivityBbChatBinding
 import com.app.bestbrain.models.ChatMessageModel
 import com.app.bestbrain.models.SessionIdResponse
 import com.app.bestbrain.network.RetrofitInstance
@@ -29,9 +29,9 @@ import retrofit2.Response
 import java.net.URISyntaxException
 
 
-class ChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListener {
+class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListener {
 
-    private lateinit var binding: ActivityChatBinding
+    private lateinit var binding: ActivityBbChatBinding
     private lateinit var mSocket: Socket
     private var sessionId: String? = null
     private lateinit var chatAdapter: ChatAdapter
@@ -40,7 +40,7 @@ class ChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityChatBinding.inflate(layoutInflater)
+        binding = ActivityBbChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         if (Constants.API_BASE_URL.isEmpty())
