@@ -186,18 +186,19 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
             runOnUiThread {
                 try {
                     val data = args[0] as JSONObject
-                    Log.e("data====", data.toString())
+                    //Log.e("data====", data.toString())
                     val mGson = GsonBuilder().create()
                     val chatMessageModel = mGson.fromJson(
                         data.toString(),
                         ChatMessageModel::class.java
                     )
                     chatMessageModel.itemType = 2
-                    if (chatMessageModel.session_id == sessionId && chatMessageModel.data?.bb_type != "end_session")
-                        chatAdapter.addItem(chatMessageModel)
-
-                    if (chatMessageModel.data?.bb_type == "end_session")
-                        sessionId = ""
+                    if (chatMessageModel.session_id == sessionId) {
+                        if (chatMessageModel.data?.bb_type != "end_session")
+                            chatAdapter.addItem(chatMessageModel)
+                        else
+                            sessionId = ""
+                    }
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
                 }
