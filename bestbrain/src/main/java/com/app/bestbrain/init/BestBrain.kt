@@ -13,6 +13,7 @@ class BestBrain {
             Constants.API_KEY = configuration.optString("appKey")
             Constants.APP_ID = configuration.optString("appID")
             Constants.HEADER_TEXT = configuration.optString("headerText")
+            Constants.NAME = configuration.optString("name")
         }
     }
 }

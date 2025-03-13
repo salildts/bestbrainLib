@@ -8,5 +8,6 @@ class Constants {
         var API_KEY = ""
         var APP_ID = ""
         var HEADER_TEXT = ""
+        var NAME = ""
     }
 }
