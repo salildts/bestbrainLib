@@ -1,93 +1,56 @@
 package com.app.bestbrain.activity
 
-import android.Manifest.permission
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.bestbrain.R
-import com.app.bestbrain.adapter.ChatAdapter
-import com.app.bestbrain.adapter.ChatButtonAdapter
+import com.app.bestbrain.adapter.ThreadHeaderAdapter
 import com.app.bestbrain.databinding.ActivityBbChatBinding
-import com.app.bestbrain.models.ChatMessageModel
-import com.app.bestbrain.models.SessionIdResponse
+import com.app.bestbrain.fragment.ChatInitFragment
+import com.app.bestbrain.fragment.ChatScreenFragment
+import com.app.bestbrain.init.BBInit
+import com.app.bestbrain.models.SessionGroup
+import com.app.bestbrain.models.SessionItem
 import com.app.bestbrain.network.RetrofitInstance
-import com.app.bestbrain.utils.AudioRecording
-import com.app.bestbrain.utils.AudioRecording.RecordCompleteListener
-import com.app.bestbrain.utils.Constants
 import com.app.bestbrain.utils.ProgressDialog
-import com.app.bestbrain.utils.SharedPreferenceManager
-import com.app.bestbrain.utils.SpaceItemDecoration
-import com.google.gson.GsonBuilder
-import io.socket.client.IO
-import io.socket.client.Socket
-import io.socket.emitter.Emitter
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.URISyntaxException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
-class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickListener {
+class BBChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBbChatBinding
-    private lateinit var mSocket: Socket
-    private var sessionId: String? = null
-    private lateinit var chatAdapter: ChatAdapter
     private lateinit var pd: ProgressDialog
-    private lateinit var sharedPreferenceManager: SharedPreferenceManager
-    private lateinit var audioRecording: AudioRecording
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-    private var isRecording = false
+    private lateinit var threadListAdapter: ThreadHeaderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBbChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (Constants.API_BASE_URL.isEmpty())
+        if (BBInit.getConfig().apiBase.isNullOrEmpty())
             throw Exception("API BASE URL is empty")
-        if (Constants.SOCKET_URL.isEmpty())
+        if (BBInit.getConfig().socketURL.isNullOrEmpty())
             throw Exception("Socket URL is empty")
-        if (Constants.API_KEY.isEmpty())
+        if (BBInit.getConfig().apiKey.isNullOrEmpty())
             throw Exception("API Key is empty")
-        if (Constants.APP_ID.isEmpty())
+        if (BBInit.getConfig().appID.isNullOrEmpty())
             throw Exception("APP ID is empty")
-
-        sharedPreferenceManager = SharedPreferenceManager(this)
-        sessionId = sharedPreferenceManager.sessionId
-
-        audioRecording = AudioRecording(this, object : RecordCompleteListener {
-
-            override fun onRecordComplete(outputText: String?) {
-                setAudioOutput(outputText)
-            }
-
-            override fun onRecordError(outputText: String?) {
-                setAudioOutput(outputText)
-            }
-        })
-        audioRecording.initAudioRecording()
-
-        requestPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                if (isGranted) {
-                    toggleRecording()
-                } else {
-                    Toast.makeText(this, "Please enable audio permission", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
 
         initView()
         initClickListener()
@@ -95,160 +58,142 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
 
     private fun initView() {
         pd = ProgressDialog(this, "", false)
-        initSocket()
-        connectSocket()
 
-        if (Constants.HEADER_TEXT.isNotEmpty())
-            binding.tvHeader.text = Constants.HEADER_TEXT
+        threadListAdapter = ThreadHeaderAdapter(
+            context = this,
+            onThreadSelect = { thread ->
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                val fragment = ChatScreenFragment()
+                val bundle = Bundle()
+                bundle.putString("session_id", thread.session_id)
+                fragment.arguments = bundle
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit()
+            },
+            onDeleteClick = { sessionId ->
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                showDeleteThreadAlert(sessionId)
+            }
+        )
+        binding.sideMenu.rvChatThread.adapter = threadListAdapter
 
-        chatAdapter = ChatAdapter(this, this)
-        binding.rvChat.adapter = chatAdapter
-        binding.rvChat.addItemDecoration(SpaceItemDecoration(10))
+        val dividerItemDecoration = DividerItemDecoration(
+            binding.sideMenu.rvChatThread.context,
+            (binding.sideMenu.rvChatThread.layoutManager as LinearLayoutManager).orientation
+        )
+        dividerItemDecoration.setDrawable(
+            ContextCompat.getDrawable(this, R.drawable.white_line_divider)!!
+        )
+        binding.sideMenu.rvChatThread.addItemDecoration(dividerItemDecoration)
 
-        getSessionId()
+        if (!BBInit.getConfig().headerText.isNullOrEmpty())
+            binding.tvHeader.text = BBInit.getConfig().headerText
+
+        loadChatInitFragment()
+
+        getThreadList(true)
     }
 
     private fun initClickListener() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) binding.drawerLayout.closeDrawer(
+                    GravityCompat.START
+                ) else
+                    finish()
+            }
+        })
+
         binding.btnBack.setOnClickListener {
             finish()
         }
 
-        binding.btnSend.setOnClickListener {
-            val messageStr = binding.edtMessage.text.toString().trim()
-            if (messageStr.isNotEmpty()) {
-                if (!sessionId.isNullOrEmpty()) {
-                    sendMessage(messageStr)
-                }
-            }
-        }
+        binding.btnMenu.setOnClickListener({ v ->
+            if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START)) binding.drawerLayout.openDrawer(
+                GravityCompat.START
+            )
+            else binding.drawerLayout.closeDrawer(GravityCompat.START)
+        })
 
-        binding.btnRecordAudio.setOnClickListener({
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                toggleRecording()
-            } else {
-                requestPermissionLauncher.launch(permission.RECORD_AUDIO)
+        binding.sideMenu.btnAddNew.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            loadChatInitFragment()
+        }
+    }
+
+    fun getThreadList(showLoader: Boolean) {
+        if (showLoader)
+            pd.showProgressDialog()
+        val call: Call<ResponseBody?> = RetrofitInstance.api.getThreadList(
+            BBInit.getConfig().apiKey,
+            BBInit.getConfig().appID,
+            BBInit.getConfig().userId
+        )
+        call.enqueue(object : Callback<ResponseBody?> {
+            override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
+                if (showLoader)
+                    pd.hideProgressDialog()
+                try {
+                    if (response.body() != null) {
+                        val apiResponse = response.body()!!.string()
+                        val groupedList = groupSessionsWithLabels(apiResponse)
+                        threadListAdapter.sessionGroupList = groupedList
+
+                    } else {
+                        val apiResponse = response.errorBody()!!.string()
+                        Log.i("error response===", apiResponse)
+                    }
+
+
+                } catch (e: Exception) {
+                    Log.e("Error---", e.printStackTrace().toString())
+                }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+                Log.d("TAG", t.message.toString())
+                if (showLoader)
+                    pd.hideProgressDialog()
             }
         })
     }
 
-    private fun initSocket() {
-        try {
-            val options = IO.Options()
-            options.transports = arrayOf("websocket")
-            mSocket = IO.socket(Constants.SOCKET_URL, options)
-        } catch (e: URISyntaxException) {
-            e.printStackTrace()
-        }
+    private fun loadChatInitFragment() {
+        val fragment = ChatInitFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        disconnectSocket()
-        audioRecording.destroyAudioRecording()
-    }
-
-    private fun connectSocket() {
-        mSocket.on(Socket.EVENT_CONNECT, onConnect)
-        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect)
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError)
-        mSocket.on("channel_chat_reply", onNewMessage)
-        mSocket.connect()
-    }
-
-    private fun disconnectSocket() {
-        mSocket.disconnect()
-        mSocket.off(Socket.EVENT_CONNECT, onConnect)
-        mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect)
-        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError)
-        mSocket.off("channel_chat_reply", onNewMessage)
-    }
-
-    private val onConnect =
-        Emitter.Listener { args: Array<Any?>? ->
-            Log.e("Status", "Connected")
-        }
-
-    private val onDisconnect = Emitter.Listener { args: Array<Any?>? ->
-        Log.e("Status", "disconnected")
-    }
-
-    private val onConnectError =
-        Emitter.Listener { args: Array<Any?>? ->
-            Log.e("Error", args.toString())
-        }
-
-    private val onNewMessage =
-        Emitter.Listener { args ->
-            runOnUiThread {
-                try {
-                    val data = args[0] as JSONObject
-                    //Log.e("data====", data.toString())
-                    val mGson = GsonBuilder().create()
-                    val chatMessageModel = mGson.fromJson(
-                        data.toString(),
-                        ChatMessageModel::class.java
-                    )
-                    chatMessageModel.itemType = 2
-                    if (chatMessageModel.session_id == sessionId) {
-                        if (chatMessageModel.data?.bb_type != "end_session")
-                            chatAdapter.addItem(chatMessageModel)
-                        else
-                            sessionId = ""
-                    }
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
-                }
+    private fun showDeleteThreadAlert(sessionId: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Delete Thread")
+            .setMessage("Are you sure you want to delete this?")
+            .setPositiveButton("Delete") { dialog, _ ->
+                deleteThread(sessionId)
             }
-        }
+            .setNegativeButton("Cancel", null)
+            .show()
 
-    private fun getSessionId() {
+    }
+
+    fun deleteThread(sessionId: String) {
         pd.showProgressDialog()
-        val json = JSONObject()
-        json.put("appId", Constants.APP_ID)
-        json.put("session_id", sessionId)
-        json.put("bb_agent_name", "Luna")
-        json.put("conversation_background", "You are talking with our field agent would need help on answering questions from data source")
-        json.put("user_identifier", "cmms-kb")
-        json.put("type", "text")
-        json.put("default_voice", "en-US-LunaNeural")
-
-        val jsonVar = JSONObject()
-        jsonVar.put("name", Constants.NAME)
-        json.put("variables", jsonVar)
-
-        val jsonLang = JSONObject()
-        jsonLang.put("source", "en-US")
-        jsonLang.put("target", "en-US-LunaNeural")
-        jsonLang.put("label", "English - Female (Luna)")
-        jsonLang.put("type", "Azure")
-        jsonLang.put("gender", "female")
-        jsonLang.put("name", "Luna")
-        json.put("language", jsonLang)
-
-        val body: RequestBody = json.toString()
-            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        val call: Call<ResponseBody?> = RetrofitInstance.api.getSessionId(Constants.API_KEY, body)
+        val call: Call<ResponseBody?> = RetrofitInstance.api.deleteThread(
+            BBInit.getConfig().apiKey,
+            sessionId
+        )
         call.enqueue(object : Callback<ResponseBody?> {
             override fun onResponse(call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
                 pd.hideProgressDialog()
                 try {
                     if (response.body() != null) {
                         val apiResponse = response.body()!!.string()
-                        val mGson = GsonBuilder().create()
-                        val sessionIdResponse = mGson.fromJson(
-                            apiResponse,
-                            SessionIdResponse::class.java
-                        )
-                        sessionId = sessionIdResponse?.data?.session_id
-                        val oldSessionId = sharedPreferenceManager.sessionId
-                        if (oldSessionId.isNullOrEmpty() || oldSessionId != sessionId) {
-                            sharedPreferenceManager.sessionId = sessionId
-                            sendMessage("")
-                        }
+                        val jsonObject = JSONObject(apiResponse)
+                        if (jsonObject.optBoolean("deleted"))
+                            getThreadList(true)
 
                     } else {
                         val apiResponse = response.errorBody()!!.string()
@@ -269,56 +214,39 @@ class BBChatActivity : AppCompatActivity(), ChatButtonAdapter.ChatButtonClickLis
         })
     }
 
-    private fun sendMessage(message: String) {
-        val jsonObject = JSONObject()
-        jsonObject.put("channel", "websocket")
-        jsonObject.put("session_id", sessionId)
-        jsonObject.put("data", message)
-        jsonObject.put("thread_id", "")
+    fun groupSessionsWithLabels(jsonString: String): List<SessionGroup> {
+        val gson = Gson()
+        val listType = object : TypeToken<List<SessionItem>>() {}.type
+        val sessions: List<SessionItem> = gson.fromJson(jsonString, listType)
 
-        mSocket.emit("channel_chat", jsonObject)
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+        val labelFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        val dateOnlyFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        if (message.isNotEmpty()) {
-            val chatMessageModel = ChatMessageModel()
-            chatMessageModel.itemType = 1
-            chatMessageModel.session_id = sessionId
-            val chatData = ChatMessageModel.Data()
-            chatData.bb_type = "output_text"
-            chatData.bb_value = message
-            chatMessageModel.data = chatData
-            chatAdapter.addItem(chatMessageModel)
-        }
+        val today = Calendar.getInstance()
+        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
 
-        binding.edtMessage.setText("")
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(binding.edtMessage.windowToken, 0)
-    }
-
-    override fun onButtonClick(message: String) {
-        sendMessage(message)
-    }
-
-    private fun toggleRecording() {
-        if (isRecording) {
-            isRecording = false
-            binding.btnRecordAudio.setImageResource(R.drawable.ic_audio)
-            audioRecording.stopRecording()
-        } else {
-            isRecording = true
-            binding.btnRecordAudio.setImageResource(R.drawable.ic_stop)
-            audioRecording.startRecording()
-            binding.edtMessage.setText("")
-        }
-    }
-
-    private fun setAudioOutput(outputText: String?) {
-        isRecording = false
-        binding.btnRecordAudio.setImageResource(R.drawable.ic_audio)
-
-        if (!outputText.isNullOrEmpty()) {
-            if (!sessionId.isNullOrEmpty()) {
-                sendMessage(outputText)
+        return sessions
+            .groupBy { item ->
+                val date = inputFormat.parse(item.ts)!!
+                dateOnlyFormat.format(date)
             }
-        }
+            .map { (dateString, items) ->
+                val sessionDate = dateOnlyFormat.parse(dateString)!!
+                val label = when (dateString) {
+                    dateOnlyFormat.format(today.time) -> "Today"
+                    dateOnlyFormat.format(yesterday.time) -> "Yesterday"
+                    else -> labelFormat.format(sessionDate)
+                }
+                SessionGroup(label, items)
+            }
+            .sortedByDescending { group ->
+                val parsed = when (group.date) {
+                    "Today" -> today.time
+                    "Yesterday" -> yesterday.time
+                    else -> labelFormat.parse(group.date) ?: Date(0)
+                }
+                parsed
+            }
     }
 }

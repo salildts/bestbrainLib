@@ -12,7 +12,7 @@ import com.app.bestbrain.models.ChatMessageModel
 class ChatButtonAdapter(
     private val context: Context,
     private val bb_buttons: List<ChatMessageModel.Data.BbButton?>?,
-    private val chatButtonClickListener: ChatButtonClickListener
+    val onButtonClick: (String) -> Unit
 ) : RecyclerView.Adapter<ChatButtonAdapter.ViewHolder>() {
 
     class ViewHolder(val binding: ChatButtonItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -30,7 +30,7 @@ class ChatButtonAdapter(
         holder.binding.btnMsg.text = bb_buttons?.get(position)?.label ?: ""
 
         holder.binding.btnMsg.setOnClickListener {
-            chatButtonClickListener.onButtonClick(bb_buttons?.get(position)?.value ?: "")
+            onButtonClick(bb_buttons?.get(position)?.value ?: "")
             if (bb_buttons != null) {
                 for (button in bb_buttons) {
                     button!!.enable = false
@@ -38,7 +38,7 @@ class ChatButtonAdapter(
             }
         }
 
-        holder.binding.btnMsg.isEnabled = bb_buttons?.get(position)?.enable ?: false
+        holder.binding.btnMsg.isEnabled = bb_buttons?.get(position)?.enable == true
         if (bb_buttons?.get(position)?.enable == true) {
             holder.binding.btnMsg.setBackgroundDrawable(
                 ContextCompat.getDrawable(
@@ -65,9 +65,5 @@ class ChatButtonAdapter(
 
     override fun getItemCount(): Int {
         return bb_buttons?.size ?: 0
-    }
-
-    interface ChatButtonClickListener {
-        fun onButtonClick(message: String)
     }
 }

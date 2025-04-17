@@ -2,8 +2,6 @@ package com.app.bestbrain.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.provider.Telephony.Carriers.PASSWORD
-import com.app.bestbrain.utils.Constants.Companion.API_KEY
 
 class SharedPreferenceManager(context : Context) {
 

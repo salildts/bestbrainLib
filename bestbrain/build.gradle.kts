@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library") // Stable AGP version
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
     `maven-publish`
 }
 
@@ -56,6 +57,7 @@ dependencies {
     api("com.google.android.flexbox:flexbox:3.0.0")
     api("com.github.ybq:Android-SpinKit:1.4.0")
     implementation(kotlin("stdlib"))
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 }
 
 tasks.withType<Jar> {

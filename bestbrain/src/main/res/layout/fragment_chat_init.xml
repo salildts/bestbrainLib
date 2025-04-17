@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="@dimen/_10sdp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Welcome! Please select the type of conversation you want to start, or select a thread from menu to continue from where you left."
+        android:textColor="@color/black"
+        android:textSize="@dimen/_13sdp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Give a conversation title"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_13sdp" />
+
+    <EditText
+        android:id="@+id/edt_conv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_bg_white_black_border"
+        android:fontFamily="@font/poppins_regular"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:padding="@dimen/_10sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/small_text" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_submit"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:background="@drawable/app_btn"
+        android:fontFamily="@font/poppins_medium"
+        android:text="Add New"
+        android:textAllCaps="false"
+        android:textColor="@color/btn_text_color"
+        android:textSize="@dimen/_13sdp" />
+</LinearLayout>

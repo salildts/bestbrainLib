@@ -1,6 +1,6 @@
 package com.app.bestbrain.network
 
-import com.app.bestbrain.utils.Constants
+import com.app.bestbrain.init.BBInit
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -14,7 +14,7 @@ object RetrofitInstance {
 
     val api: ApiInterface by lazy {
         Retrofit.Builder()
-            .baseUrl(Constants.API_BASE_URL)
+            .baseUrl(BBInit.getConfig().apiBase!!)
             .client(genericHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
