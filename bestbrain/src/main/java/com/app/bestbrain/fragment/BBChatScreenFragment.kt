@@ -17,8 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.app.bestbrain.R
 import com.app.bestbrain.activity.BBChatActivity
-import com.app.bestbrain.adapter.ChatAdapter
-import com.app.bestbrain.databinding.FragmentChatScreenBinding
+import com.app.bestbrain.adapter.BBChatAdapter
+import com.app.bestbrain.databinding.FragmentChatBbScreenBinding
 import com.app.bestbrain.init.BBInit
 import com.app.bestbrain.models.ChatHistoryResponse
 import com.app.bestbrain.models.ChatMessageModel
@@ -54,13 +54,13 @@ import retrofit2.Response
 import java.io.Serializable
 import java.net.URISyntaxException
 
-class ChatScreenFragment : Fragment() {
+class BBChatScreenFragment : Fragment() {
 
-    private lateinit var binding: FragmentChatScreenBinding
+    private lateinit var binding: FragmentChatBbScreenBinding
     private lateinit var mSocket: Socket
     private var sessionId: String? = null
     private var sessionName: String? = null
-    private lateinit var chatAdapter: ChatAdapter
+    private lateinit var chatAdapter: BBChatAdapter
     private lateinit var audioRecording: AudioRecording
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private var isRecording = false
@@ -109,7 +109,7 @@ class ChatScreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentChatScreenBinding.inflate(inflater, container, false)
+        binding = FragmentChatBbScreenBinding.inflate(inflater, container, false)
         initView()
         setClickListener()
         return binding.root
@@ -120,7 +120,7 @@ class ChatScreenFragment : Fragment() {
         initSocket()
         connectSocket()
 
-        chatAdapter = ChatAdapter(
+        chatAdapter = BBChatAdapter(
             requireActivity(),
             { message ->
                 sendMessage(message)
@@ -130,7 +130,7 @@ class ChatScreenFragment : Fragment() {
                 startQRScanner()
             },
             { position ->
-                AddAttachmentFragment { fileBytes ->
+                BBAddAttachmentFragment { fileBytes ->
                     val dataArray = JSONArray()
                     fileBytes.forEach { byte ->
                         dataArray.put(byte.toInt() and 0xFF)
@@ -146,10 +146,10 @@ class ChatScreenFragment : Fragment() {
                     chatAdapter.notifyItemChanged(position)
                     sendMessage(json)
 
-                }.show(childFragmentManager, "AddAttachmentFragment")
+                }.show(childFragmentManager, "BBAddAttachmentFragment")
             },
             { optionList, pos ->
-                val dropdownFragment = DropdownFragment { selectedOption ->
+                val dropdownFragment = BBDropdownFragment { selectedOption ->
                     chatAdapter.getChatList()[pos].data?.enable = false
                     chatAdapter.notifyItemChanged(pos)
                     sendMessage(selectedOption.value ?: "")
@@ -157,7 +157,7 @@ class ChatScreenFragment : Fragment() {
                 dropdownFragment.arguments = Bundle().apply {
                     putSerializable("itemList", optionList as Serializable?)
                 }
-                dropdownFragment.show(childFragmentManager, "DropdownFragment")
+                dropdownFragment.show(childFragmentManager, "BBDropdownFragment")
             }
         )
         binding.rvChat.adapter = chatAdapter
@@ -288,11 +288,11 @@ class ChatScreenFragment : Fragment() {
     private fun toggleRecording() {
         if (isRecording) {
             isRecording = false
-            binding.btnRecordAudio.setImageResource(R.drawable.ic_audio)
+            binding.btnRecordAudio.setImageResource(R.drawable.ic_audio_bb)
             audioRecording.stopRecording()
         } else {
             isRecording = true
-            binding.btnRecordAudio.setImageResource(R.drawable.ic_stop)
+            binding.btnRecordAudio.setImageResource(R.drawable.ic_stop_bb)
             audioRecording.startRecording()
             binding.edtMessage.setText("")
         }
@@ -300,7 +300,7 @@ class ChatScreenFragment : Fragment() {
 
     private fun setAudioOutput(outputText: String?) {
         isRecording = false
-        binding.btnRecordAudio.setImageResource(R.drawable.ic_audio)
+        binding.btnRecordAudio.setImageResource(R.drawable.ic_audio_bb)
 
         if (!outputText.isNullOrEmpty()) {
             if (!sessionId.isNullOrEmpty()) {

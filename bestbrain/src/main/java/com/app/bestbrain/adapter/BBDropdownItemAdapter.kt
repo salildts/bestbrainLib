@@ -3,23 +3,23 @@ package com.app.bestbrain.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.app.bestbrain.databinding.DropdownItemBinding
+import com.app.bestbrain.databinding.BbDropdownItemBinding
 import com.app.bestbrain.models.BbOption
 
-class DropdownItemAdapter(
+class BBDropdownItemAdapter(
     val itemList: ArrayList<BbOption>,
     val onItemSelect: (BbOption) -> Unit
 ) :
-    RecyclerView.Adapter<DropdownItemAdapter.ViewHolder>() {
+    RecyclerView.Adapter<BBDropdownItemAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: DropdownItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: BbDropdownItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            DropdownItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            BbDropdownItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 

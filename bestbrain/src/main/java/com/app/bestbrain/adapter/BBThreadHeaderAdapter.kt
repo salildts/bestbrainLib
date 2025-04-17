@@ -8,16 +8,16 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.bestbrain.R
-import com.app.bestbrain.databinding.ThreadHeaderItemBinding
+import com.app.bestbrain.databinding.BbThreadHeaderItemBinding
 import com.app.bestbrain.models.SessionGroup
 import com.app.bestbrain.models.SessionItem
 
-class ThreadHeaderAdapter(
+class BBThreadHeaderAdapter(
     val context: Context,
     val onThreadSelect: (SessionItem) -> Unit,
     val onDeleteClick: (String) -> Unit
 ) :
-    RecyclerView.Adapter<ThreadHeaderAdapter.ViewHolder>() {
+    RecyclerView.Adapter<BBThreadHeaderAdapter.ViewHolder>() {
 
     private var _sessionGroupList: List<SessionGroup> = arrayListOf()
 
@@ -28,14 +28,14 @@ class ThreadHeaderAdapter(
             notifyDataSetChanged()
         }
 
-    class ViewHolder(val binding: ThreadHeaderItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: BbThreadHeaderItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            ThreadHeaderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            BbThreadHeaderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -50,11 +50,11 @@ class ThreadHeaderAdapter(
             (holder.binding.rvSession.layoutManager as LinearLayoutManager).orientation
         )
         dividerItemDecoration.setDrawable(
-            ContextCompat.getDrawable(context, R.drawable.white_line_divider)!!
+            ContextCompat.getDrawable(context, R.drawable.bb_white_line_divider)!!
         )
         holder.binding.rvSession.addItemDecoration(dividerItemDecoration)
 
-        holder.binding.rvSession.adapter = ThreadListAdapter(
+        holder.binding.rvSession.adapter = BBThreadListAdapter(
             _sessionGroupList[position].sessions,
             onThreadSelect,
             onDeleteClick

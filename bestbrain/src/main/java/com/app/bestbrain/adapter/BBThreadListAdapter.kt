@@ -3,24 +3,24 @@ package com.app.bestbrain.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.app.bestbrain.databinding.ThreadListItemBinding
+import com.app.bestbrain.databinding.BbThreadListItemBinding
 import com.app.bestbrain.models.SessionItem
 
-class ThreadListAdapter(
+class BBThreadListAdapter(
     val threadList: List<SessionItem>,
     val onThreadSelect: (SessionItem) -> Unit,
     val onDeleteClick: (String) -> Unit
 ) :
-    RecyclerView.Adapter<ThreadListAdapter.ViewHolder>() {
+    RecyclerView.Adapter<BBThreadListAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: ThreadListItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: BbThreadListItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            ThreadListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            BbThreadListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 

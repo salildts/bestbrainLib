@@ -20,5 +20,5 @@
         android:id="@+id/btn_delete"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
-        android:src="@drawable/ic_delete" />
+        android:src="@drawable/ic_delete_bb" />
 </LinearLayout>

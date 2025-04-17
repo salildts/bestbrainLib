@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/_3sdp"
         android:layout_marginEnd="@dimen/_5sdp"
         android:layout_marginBottom="@dimen/_2sdp"
-        android:background="@drawable/blue_btn"
+        android:background="@drawable/app_btn"
         android:fontFamily="@font/poppins_regular"
         android:paddingStart="@dimen/_10sdp"
         android:paddingEnd="@dimen/_10sdp"

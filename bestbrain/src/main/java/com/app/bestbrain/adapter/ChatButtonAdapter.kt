@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.bestbrain.R
-import com.app.bestbrain.databinding.ChatButtonItemBinding
+import com.app.bestbrain.databinding.BbChatButtonItemBinding
 import com.app.bestbrain.models.ChatMessageModel
 
 class ChatButtonAdapter(
@@ -15,14 +15,14 @@ class ChatButtonAdapter(
     val onButtonClick: (String) -> Unit
 ) : RecyclerView.Adapter<ChatButtonAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: ChatButtonItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class ViewHolder(val binding: BbChatButtonItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            ChatButtonItemBinding.inflate(LayoutInflater.from(parent.context))
+            BbChatButtonItemBinding.inflate(LayoutInflater.from(parent.context))
         )
     }
 
@@ -43,7 +43,7 @@ class ChatButtonAdapter(
             holder.binding.btnMsg.setBackgroundDrawable(
                 ContextCompat.getDrawable(
                     context,
-                    R.drawable.blue_btn
+                    R.drawable.app_btn
                 )
             )
             holder.binding.btnMsg.setTextColor(
@@ -56,7 +56,7 @@ class ChatButtonAdapter(
             holder.binding.btnMsg.setBackgroundDrawable(
                 ContextCompat.getDrawable(
                     context,
-                    R.drawable.gray_btn_bg
+                    R.drawable.bb_gray_btn_bg
                 )
             )
             holder.binding.btnMsg.setTextColor(ContextCompat.getColor(context, R.color.black))

@@ -9,10 +9,10 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.bestbrain.R
-import com.app.bestbrain.adapter.ThreadHeaderAdapter
+import com.app.bestbrain.adapter.BBThreadHeaderAdapter
 import com.app.bestbrain.databinding.ActivityBbChatBinding
-import com.app.bestbrain.fragment.ChatInitFragment
-import com.app.bestbrain.fragment.ChatScreenFragment
+import com.app.bestbrain.fragment.BBChatInitFragment
+import com.app.bestbrain.fragment.BBChatScreenFragment
 import com.app.bestbrain.init.BBInit
 import com.app.bestbrain.models.SessionGroup
 import com.app.bestbrain.models.SessionItem
@@ -36,7 +36,7 @@ class BBChatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBbChatBinding
     private lateinit var pd: ProgressDialog
-    private lateinit var threadListAdapter: ThreadHeaderAdapter
+    private lateinit var threadListAdapter: BBThreadHeaderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,11 +59,11 @@ class BBChatActivity : AppCompatActivity() {
     private fun initView() {
         pd = ProgressDialog(this, "", false)
 
-        threadListAdapter = ThreadHeaderAdapter(
+        threadListAdapter = BBThreadHeaderAdapter(
             context = this,
             onThreadSelect = { thread ->
                 binding.drawerLayout.closeDrawer(GravityCompat.START)
-                val fragment = ChatScreenFragment()
+                val fragment = BBChatScreenFragment()
                 val bundle = Bundle()
                 bundle.putString("session_id", thread.session_id)
                 fragment.arguments = bundle
@@ -83,7 +83,7 @@ class BBChatActivity : AppCompatActivity() {
             (binding.sideMenu.rvChatThread.layoutManager as LinearLayoutManager).orientation
         )
         dividerItemDecoration.setDrawable(
-            ContextCompat.getDrawable(this, R.drawable.white_line_divider)!!
+            ContextCompat.getDrawable(this, R.drawable.bb_white_line_divider)!!
         )
         binding.sideMenu.rvChatThread.addItemDecoration(dividerItemDecoration)
 
@@ -161,7 +161,7 @@ class BBChatActivity : AppCompatActivity() {
     }
 
     private fun loadChatInitFragment() {
-        val fragment = ChatInitFragment()
+        val fragment = BBChatInitFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()

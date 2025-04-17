@@ -27,7 +27,7 @@
         android:id="@+id/edt_conv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/edit_text_bg_white_black_border"
+        android:background="@drawable/bb_edit_text_bg_white_black_border"
         android:fontFamily="@font/poppins_regular"
         android:imeOptions="actionDone"
         android:inputType="text"

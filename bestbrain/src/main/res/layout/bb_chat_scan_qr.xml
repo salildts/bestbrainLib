@@ -32,7 +32,7 @@
             <ImageView
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
-                android:src="@drawable/scan_qr" />
+                android:src="@drawable/bb_scan_qr" />
 
             <TextView
                 android:layout_width="wrap_content"

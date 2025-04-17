@@ -41,14 +41,14 @@
             android:layout_height="@dimen/_30sdp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/_10sdp"
-            android:src="@drawable/ic_audio" />
+            android:src="@drawable/ic_audio_bb" />
 
         <EditText
             android:id="@+id/edt_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/edit_text_bg_white_black_border"
+            android:background="@drawable/bb_edit_text_bg_white_black_border"
             android:fontFamily="@font/poppins_regular"
             android:hint="Write your message..."
             android:imeOptions="actionDone"
@@ -64,6 +64,6 @@
             android:layout_height="@dimen/_30sdp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/_10sdp"
-            android:src="@drawable/ic_send" />
+            android:src="@drawable/ic_send_bb" />
     </LinearLayout>
 </LinearLayout>

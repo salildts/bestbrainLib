@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.app.bestbrain.R
-import com.app.bestbrain.databinding.FragmentChatInitBinding
+import com.app.bestbrain.databinding.FragmentChatBbInitBinding
 import com.app.bestbrain.utils.CommonMethods
 
-class ChatInitFragment : Fragment() {
+class BBChatInitFragment : Fragment() {
 
-    private lateinit var binding: FragmentChatInitBinding
+    private lateinit var binding: FragmentChatBbInitBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentChatInitBinding.inflate(inflater, container, false)
+        binding = FragmentChatBbInitBinding.inflate(inflater, container, false)
         initView()
         return binding.root
     }
@@ -42,7 +42,7 @@ class ChatInitFragment : Fragment() {
                 ).show()
                 return@setOnClickListener
             }
-            val fragment = ChatScreenFragment()
+            val fragment = BBChatScreenFragment()
             val bundle = Bundle()
             bundle.putString("session_name", binding.edtConvTitle.text.toString().trim())
             fragment.arguments = bundle

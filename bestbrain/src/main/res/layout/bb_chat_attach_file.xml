@@ -31,7 +31,7 @@
             <ImageView
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:src="@drawable/ic_attachment" />
+                android:src="@drawable/ic_attachment_bb" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -8,14 +8,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.bestbrain.R
-import com.app.bestbrain.adapter.DropdownItemAdapter
-import com.app.bestbrain.databinding.FragmentDropdownBinding
+import com.app.bestbrain.adapter.BBDropdownItemAdapter
+import com.app.bestbrain.databinding.FragmentBbDropdownBinding
 import com.app.bestbrain.models.BbOption
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class DropdownFragment(val onItemSelect: (BbOption) -> Unit) : BottomSheetDialogFragment() {
+class BBDropdownFragment(val onItemSelect: (BbOption) -> Unit) : BottomSheetDialogFragment() {
 
-    private lateinit var fragmentDropdownBinding: FragmentDropdownBinding
+    private lateinit var fragmentDropdownBinding: FragmentBbDropdownBinding
     private var itemList: ArrayList<BbOption> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,7 @@ class DropdownFragment(val onItemSelect: (BbOption) -> Unit) : BottomSheetDialog
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        fragmentDropdownBinding = FragmentDropdownBinding.inflate(inflater, container, false)
+        fragmentDropdownBinding = FragmentBbDropdownBinding.inflate(inflater, container, false)
         initView()
         return fragmentDropdownBinding.root
     }
@@ -39,10 +39,10 @@ class DropdownFragment(val onItemSelect: (BbOption) -> Unit) : BottomSheetDialog
             (fragmentDropdownBinding.rvDropdown.layoutManager as LinearLayoutManager).orientation
         )
         dividerItemDecoration.setDrawable(
-            ContextCompat.getDrawable(requireContext(), R.drawable.gray_line_divider)!!
+            ContextCompat.getDrawable(requireContext(), R.drawable.bb_gray_line_divider)!!
         )
         fragmentDropdownBinding.rvDropdown.addItemDecoration(dividerItemDecoration)
-        val dropdownItemAdapter = DropdownItemAdapter(itemList) { item ->
+        val dropdownItemAdapter = BBDropdownItemAdapter(itemList) { item ->
             onItemSelect(item)
             dismiss()
         }

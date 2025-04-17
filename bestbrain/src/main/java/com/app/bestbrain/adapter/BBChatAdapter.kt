@@ -6,12 +6,12 @@ import android.text.Html.FROM_HTML_MODE_LEGACY
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.app.bestbrain.databinding.ChatAttachFileBinding
-import com.app.bestbrain.databinding.ChatReceiveItemButtonBinding
-import com.app.bestbrain.databinding.ChatReceiveItemDropdownBinding
-import com.app.bestbrain.databinding.ChatReceiveItemTextBinding
-import com.app.bestbrain.databinding.ChatScanQrBinding
-import com.app.bestbrain.databinding.ChatSendItemBinding
+import com.app.bestbrain.databinding.BbChatAttachFileBinding
+import com.app.bestbrain.databinding.BbChatReceiveItemButtonBinding
+import com.app.bestbrain.databinding.BbChatReceiveItemDropdownBinding
+import com.app.bestbrain.databinding.BbChatReceiveItemTextBinding
+import com.app.bestbrain.databinding.BbChatScanQrBinding
+import com.app.bestbrain.databinding.BbChatSendItemBinding
 import com.app.bestbrain.models.BbOption
 import com.app.bestbrain.models.ChatMessageModel
 import com.app.bestbrain.utils.BBType
@@ -21,7 +21,7 @@ import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 
-class ChatAdapter(
+class BBChatAdapter(
     private val context: Context,
     val onButtonClick: (String) -> Unit,
     val onQrClick: (Int) -> Unit,
@@ -46,33 +46,33 @@ class ChatAdapter(
         notifyDataSetChanged()
     }
 
-    class SendViewHolder(val binding: ChatSendItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class SendViewHolder(val binding: BbChatSendItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-    class ReceiveTextViewHolder(val binding: ChatReceiveItemTextBinding) :
+    class ReceiveTextViewHolder(val binding: BbChatReceiveItemTextBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class ReceiveButtonViewHolder(val binding: ChatReceiveItemButtonBinding) :
+    class ReceiveButtonViewHolder(val binding: BbChatReceiveItemButtonBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class ScanQRViewHolder(val binding: ChatScanQrBinding) : RecyclerView.ViewHolder(binding.root)
+    class ScanQRViewHolder(val binding: BbChatScanQrBinding) : RecyclerView.ViewHolder(binding.root)
 
-    class AttachFileViewHolder(val binding: ChatAttachFileBinding) :
+    class AttachFileViewHolder(val binding: BbChatAttachFileBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class DropdownViewHolder(val binding: ChatReceiveItemDropdownBinding) :
+    class DropdownViewHolder(val binding: BbChatReceiveItemDropdownBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             1 -> {
                 SendViewHolder(
-                    ChatSendItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    BbChatSendItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             }
 
             2 -> {
                 ReceiveTextViewHolder(
-                    ChatReceiveItemTextBinding.inflate(
+                    BbChatReceiveItemTextBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -82,13 +82,13 @@ class ChatAdapter(
 
             3 -> {
                 ScanQRViewHolder(
-                    ChatScanQrBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    BbChatScanQrBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             }
 
             4 -> {
                 AttachFileViewHolder(
-                    ChatAttachFileBinding.inflate(
+                    BbChatAttachFileBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -98,7 +98,7 @@ class ChatAdapter(
 
             5 -> {
                 DropdownViewHolder(
-                    ChatReceiveItemDropdownBinding.inflate(
+                    BbChatReceiveItemDropdownBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false
@@ -108,7 +108,7 @@ class ChatAdapter(
 
             else -> {
                 ReceiveButtonViewHolder(
-                    ChatReceiveItemButtonBinding.inflate(
+                    BbChatReceiveItemButtonBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
                         false

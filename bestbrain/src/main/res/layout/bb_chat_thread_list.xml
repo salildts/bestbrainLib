@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/_10sdp"
-        android:background="@drawable/white_btn_bg"
+        android:background="@drawable/bb_white_btn_bg"
         android:fontFamily="@font/poppins_medium"
         android:text="Add New"
         android:textAllCaps="false"

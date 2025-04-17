@@ -11,16 +11,16 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContracts
-import com.app.bestbrain.databinding.FragmentAddAttachmentBinding
+import com.app.bestbrain.databinding.FragmentAddBbAttachmentBinding
 import com.app.bestbrain.utils.CommonMethods.createImageFile
 import com.app.bestbrain.utils.CommonMethods.uriToBytes
 import com.app.bestbrain.utils.PermissionHelper
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.io.File
 
-class AddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomSheetDialogFragment() {
+class BBAddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomSheetDialogFragment() {
 
-    private lateinit var fragmentAddAttachmentBinding: FragmentAddAttachmentBinding
+    private lateinit var fragmentAddAttachmentBinding: FragmentAddBbAttachmentBinding
     private lateinit var cameraPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var cameraUri: Uri
     private lateinit var cameraFile: File
@@ -67,7 +67,7 @@ class AddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomSheet
         savedInstanceState: Bundle?
     ): View? {
         fragmentAddAttachmentBinding =
-            FragmentAddAttachmentBinding.inflate(inflater, container, false)
+            FragmentAddBbAttachmentBinding.inflate(inflater, container, false)
         return fragmentAddAttachmentBinding.root
     }
 
