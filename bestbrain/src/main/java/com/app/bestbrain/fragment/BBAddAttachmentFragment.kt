@@ -31,11 +31,13 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray, String) -> Unit) :
         ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
-            val imageBytes = uriToBytes(requireContext(), cameraUri)
+            val imageBytes = CommonMethods.resizeAndCompressImageUriToByteArray(requireContext(), cameraUri)
             val fileName = CommonMethods.getFileName(requireContext(), cameraUri)
-            println(imageBytes)
-            onFilePicked(imageBytes, fileName ?: "")
-            dismiss()
+            imageBytes?.let {
+                println(imageBytes)
+                onFilePicked(imageBytes, fileName ?: "")
+                dismiss()
+            }
         }
     }
 
@@ -43,11 +45,13 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray, String) -> Unit) :
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val imageBytes = uriToBytes(requireContext(), uri)
+            val imageBytes = CommonMethods.resizeAndCompressImageUriToByteArray(requireContext(), uri)
             val fileName = CommonMethods.getFileName(requireContext(), uri)
-            println(imageBytes)
-            onFilePicked(imageBytes, fileName ?: "")
-            dismiss()
+            imageBytes?.let {
+                println(imageBytes)
+                onFilePicked(imageBytes, fileName ?: "")
+                dismiss()
+            }
         }
     }
 
