@@ -483,4 +483,9 @@ class BBChatScreenFragment : Fragment() {
         typingJob?.cancel()
         binding.tvTyping.text = ""
     }
+
+    override fun onDestroyView() {
+        hideTypingLoader()
+        super.onDestroyView()
+    }
 }
