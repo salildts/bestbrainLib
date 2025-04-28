@@ -2,6 +2,7 @@ package com.app.bestbrain.utils
 
 import android.content.Context
 import android.net.Uri
+import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
 import java.io.File
 import java.text.SimpleDateFormat
@@ -51,4 +52,28 @@ object CommonMethods {
             else -> false
         }
     }
+
+    fun getFileName(context: Context, uri: Uri): String? {
+        var result: String? = null
+
+        if (uri.scheme == "content") {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    result = it.getString(it.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                }
+            }
+        }
+
+        if (result == null) {
+            result = uri.path
+            val cut = result?.lastIndexOf('/')
+            if (cut != null && cut != -1) {
+                result = result?.substring(cut + 1)
+            }
+        }
+
+        return result
+    }
+
 }

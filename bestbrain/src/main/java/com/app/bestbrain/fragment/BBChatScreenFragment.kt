@@ -130,7 +130,7 @@ class BBChatScreenFragment : Fragment() {
                 startQRScanner()
             },
             { position ->
-                BBAddAttachmentFragment { fileBytes ->
+                BBAddAttachmentFragment { fileBytes, fileName ->
                     val dataArray = JSONArray()
                     fileBytes.forEach { byte ->
                         dataArray.put(byte.toInt() and 0xFF)
@@ -141,6 +141,7 @@ class BBChatScreenFragment : Fragment() {
                     }
                     val json = JSONObject().apply {
                         put("File", fileJson)
+                        put("original_file_name", fileName)
                     }
                     chatAdapter.getChatList()[position].data?.enable = false
                     chatAdapter.notifyItemChanged(position)
@@ -330,6 +331,7 @@ class BBChatScreenFragment : Fragment() {
         jsonVar.put("requesterType", 1)
         jsonVar.put("IncidentType", 1)
         jsonVar.put("UserID", 1)
+        jsonVar.put("cmmsApiKey", BBInit.getConfig().cmmsApiKey)
         json.put("variables", jsonVar)
 
         val jsonLang = JSONObject()

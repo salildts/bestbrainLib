@@ -12,13 +12,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.activity.result.contract.ActivityResultContracts
 import com.app.bestbrain.databinding.FragmentAddBbAttachmentBinding
+import com.app.bestbrain.utils.CommonMethods
 import com.app.bestbrain.utils.CommonMethods.createImageFile
 import com.app.bestbrain.utils.CommonMethods.uriToBytes
 import com.app.bestbrain.utils.PermissionHelper
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.io.File
 
-class BBAddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomSheetDialogFragment() {
+class BBAddAttachmentFragment(val onFilePicked: (ByteArray, String) -> Unit) :
+    BottomSheetDialogFragment() {
 
     private lateinit var fragmentAddAttachmentBinding: FragmentAddBbAttachmentBinding
     private lateinit var cameraPermissionLauncher: ActivityResultLauncher<String>
@@ -30,8 +32,9 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomShe
     ) { success ->
         if (success) {
             val imageBytes = uriToBytes(requireContext(), cameraUri)
+            val fileName = CommonMethods.getFileName(requireContext(), cameraUri)
             println(imageBytes)
-            onFilePicked(imageBytes)
+            onFilePicked(imageBytes, fileName ?: "")
             dismiss()
         }
     }
@@ -41,8 +44,9 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomShe
     ) { uri: Uri? ->
         uri?.let {
             val imageBytes = uriToBytes(requireContext(), uri)
+            val fileName = CommonMethods.getFileName(requireContext(), uri)
             println(imageBytes)
-            onFilePicked(imageBytes)
+            onFilePicked(imageBytes, fileName ?: "")
             dismiss()
         }
     }
@@ -54,8 +58,9 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray) -> Unit) : BottomShe
             val fileUri = result.data?.data
             fileUri?.let {
                 val fileBytes = uriToBytes(requireContext(), fileUri)
+                val fileName = CommonMethods.getFileName(requireContext(), fileUri)
                 println(fileBytes)
-                onFilePicked(fileBytes)
+                onFilePicked(fileBytes, fileName ?: "")
                 dismiss()
             }
         }
