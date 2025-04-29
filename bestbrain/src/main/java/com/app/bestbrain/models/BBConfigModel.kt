@@ -12,6 +12,7 @@ data class BBConfigModel(
     var authToken: String? = null,
     val userId: Int = 0,
     val cmmsApiKey: String? = null,
+    val companyId: String? = null,
 )
 
 class BBConfigBuilder {
@@ -26,6 +27,7 @@ class BBConfigBuilder {
     private var authToken: String? = null
     private var userId: Int = 0
     private var cmmsApiKey: String? = null
+    private var companyId: String? = null
 
     fun apiBase(value: String?) = apply { apiBase = value }
     fun socketURL(value: String?) = apply { socketURL = value }
@@ -38,6 +40,7 @@ class BBConfigBuilder {
     fun authToken(value: String?) = apply { authToken = value }
     fun userId(value: Int) = apply { userId = value }
     fun cmmsApiKey(value: String?) = apply { cmmsApiKey = value }
+    fun companyId(value: String?) = apply { companyId = value }
 
     fun build(): BBConfigModel {
         return BBConfigModel(
@@ -51,7 +54,8 @@ class BBConfigBuilder {
             email,
             authToken,
             userId,
-            cmmsApiKey
+            cmmsApiKey,
+            companyId
         )
     }
 }

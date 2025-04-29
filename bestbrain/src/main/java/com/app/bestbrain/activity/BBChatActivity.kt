@@ -219,7 +219,7 @@ class BBChatActivity : AppCompatActivity() {
         val listType = object : TypeToken<List<SessionItem>>() {}.type
         val sessions: List<SessionItem> = gson.fromJson(jsonString, listType)
 
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
         val labelFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
         val dateOnlyFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 

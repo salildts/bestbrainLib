@@ -251,11 +251,12 @@ class BBChatScreenFragment : Fragment() {
                             chatAdapter.addItem(chatMessageModel)
                         else
                             sessionId = ""
+                        hideTypingLoader()
                     }
                 } catch (e: java.lang.Exception) {
                     e.printStackTrace()
+                    hideTypingLoader()
                 }
-                hideTypingLoader()
             }
         }
 
@@ -332,6 +333,7 @@ class BBChatScreenFragment : Fragment() {
         jsonVar.put("IncidentType", 1)
         jsonVar.put("UserID", 1)
         jsonVar.put("cmmsApiKey", BBInit.getConfig().cmmsApiKey)
+        jsonVar.put("companyID", BBInit.getConfig().companyId)
         json.put("variables", jsonVar)
 
         val jsonLang = JSONObject()

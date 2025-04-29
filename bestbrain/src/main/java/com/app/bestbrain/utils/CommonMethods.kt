@@ -164,4 +164,16 @@ object CommonMethods {
         return bitmap.scale(finalWidth, finalHeight)
     }
 
+    fun saveByteArrayToImageFile(byteArray: ByteArray, outputFile: File): Boolean {
+        return try {
+            outputFile.outputStream().use { outputStream ->
+                outputStream.write(byteArray)
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 }

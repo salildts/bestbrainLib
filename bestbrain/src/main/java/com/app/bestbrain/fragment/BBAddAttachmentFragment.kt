@@ -34,7 +34,7 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray, String) -> Unit) :
             val imageBytes = CommonMethods.resizeAndCompressImageUriToByteArray(requireContext(), cameraUri)
             val fileName = CommonMethods.getFileName(requireContext(), cameraUri)
             imageBytes?.let {
-                println(imageBytes)
+                //println(imageBytes)
                 onFilePicked(imageBytes, fileName ?: "")
                 dismiss()
             }
@@ -48,7 +48,7 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray, String) -> Unit) :
             val imageBytes = CommonMethods.resizeAndCompressImageUriToByteArray(requireContext(), uri)
             val fileName = CommonMethods.getFileName(requireContext(), uri)
             imageBytes?.let {
-                println(imageBytes)
+                //println(imageBytes)
                 onFilePicked(imageBytes, fileName ?: "")
                 dismiss()
             }
@@ -63,7 +63,7 @@ class BBAddAttachmentFragment(val onFilePicked: (ByteArray, String) -> Unit) :
             fileUri?.let {
                 val fileBytes = uriToBytes(requireContext(), fileUri)
                 val fileName = CommonMethods.getFileName(requireContext(), fileUri)
-                println(fileBytes)
+                //println(fileBytes)
                 onFilePicked(fileBytes, fileName ?: "")
                 dismiss()
             }
